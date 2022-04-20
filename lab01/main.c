@@ -61,7 +61,7 @@ void *elevaAoQuadrado (void *arg) {
       }
   } else {
       for (i = 5000; i < 10000; ++i) {
-          v[i] = myVector[i]*myVector[i];
+          myVector[i] = myVector[i]*myVector[i];
       }
   }
 
