@@ -68,13 +68,13 @@ void findMinorAndMajorSequential(double *vector, long long int size, double *min
  */
 void *findMinorAndMajorConcurrent(void *arg)
 {
-   	// Convertendo argumento
+    // Convertendo argumento
     concorrentData *args = (concorrentData*) arg;
 
-   	// Realizando varredura
+    // Realizando varredura
     for (long long int i = args->id; i < args->size; i += args->step)
     {
-       	// Primeira iteração
+        // Primeira iteração
         if (i == args->id)
         {
             args->major = vector[0];
@@ -82,7 +82,7 @@ void *findMinorAndMajorConcurrent(void *arg)
         }
         else
         {
-           	// Verificando menores e maiores
+            // Verificando menores e maiores
             if (vector[i] < args->minor)
             {
                 args->minor = vector[i];
@@ -98,7 +98,7 @@ void *findMinorAndMajorConcurrent(void *arg)
 
 int main(int argc, char *argv[])
 {
-   	// Obtendo parâmetros
+    // Obtendo parâmetros
     if (argc < 3)
     {
         printf("Digite: %s < dimensao do vetor > < numero de threads>\n", argv[0]);
@@ -110,10 +110,10 @@ int main(int argc, char *argv[])
 
     /*Inicializando variáveis */
 
-   	// Inicializando rand
+    // Inicializando rand
     srand(time(0));
 
-   	// Vetor
+    // Vetor
     vector = (double*) malloc(sizeof(double) *size);
     if (!vector)
     {
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
         vector[i] = rand() *1.1;
     }
 
-   	// Id da thread
+    // Id da thread
     pthread_t *threadIds = (pthread_t*) malloc(sizeof(pthread_t) *nthreads);
     if (!threadIds)
     {
@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
         return 3;
     }
 
-   	// Estrutura para versão concorrente
+    // Estrutura para versão concorrente
     concorrentData *args = (concorrentData*) malloc(sizeof(concorrentData) *size);
     if (!args)
     {
@@ -141,20 +141,20 @@ int main(int argc, char *argv[])
         return 4;
     }
 
-   	// Variáveis para armazenar min e max em sequencial
+    // Variáveis para armazenar min e max em sequencial
     double minorSequential = DBL_MAX;
     double majorSequential = DBL_MIN;
 
-   	// Controle de tempo
+    // Controle de tempo
     double start = -1;
     double end = -1;
     double deltaSequential = -1;
     double deltaConcurrent = -1;
 
-   	// Imprime vetor
-   	// print(vector, size);
+    // Imprime vetor
+    // print(vector, size);
 
-   	// Calcula tempo de operação sequencial
+    // Calcula tempo de operação sequencial
     GET_TIME(start);
     findMinorAndMajorSequential(vector, size, &minorSequential, &majorSequential);
     GET_TIME(end);
@@ -164,16 +164,16 @@ int main(int argc, char *argv[])
     printf("Major value founded in vector by sequential code: %lf\n", majorSequential);
     printf("Time spent: %.6lf\n\n", deltaSequential);
 
-   	// Calcula tempo de operação concorrente
+    // Calcula tempo de operação concorrente
     GET_TIME(start);
 
-   	// Para cada thread
+    // Para cada thread
     for (int i = 0; i < nthreads; ++i)
     {
         (args + i)->id = i;
         (args + i)->size = size;
         (args + i)->step = nthreads;
-       	// Cria as threads usando a função concorrente
+           // Cria as threads usando a função concorrente
         if (pthread_create((threadIds + i), NULL, findMinorAndMajorConcurrent, (void*)(args + i)))
         {
             printf("ERRO--pthread_create\n");
@@ -181,21 +181,21 @@ int main(int argc, char *argv[])
         }
     }
 
-   	// Variáveis para armazenar min e max em concorrente
+    // Variáveis para armazenar min e max em concorrente
     double minorConcurrent = DBL_MAX;
     double majorConcurrent = DBL_MIN;
 
-   	// Aguarda o término de cada thread
+    // Aguarda o término de cada thread
     for (int i = 0; i < nthreads; ++i)
     {
         pthread_join(*(threadIds + i), NULL);
 
-       	// Verificando se a thread atual achou um menor
+        // Verificando se a thread atual achou um menor
         if ((args + i)->minor < minorConcurrent)
         {
             minorConcurrent = (args + i)->minor;
         }
-       	// Verificando se a thread atual achou um maior
+        // Verificando se a thread atual achou um maior
         if ((args + i)->major > majorConcurrent)
         {
             majorConcurrent = (args + i)->major;
@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
     printf("Major value founded in vector by concurrent code: %lf\n", majorConcurrent);
     printf("Time spent: %.6lf\n\n", deltaConcurrent);
 
-   	// Libera memória
+    // Libera memória
     free(vector);
     free(threads);
     free(args);
