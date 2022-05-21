@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
     // Quantidade de threads
     pthread_t threads[nthreads];
 
-    // Inicialização do Mutex e variáveis condicionais
+    // Inicialização do mutex e das variáveis condicionais
     pthread_mutex_init(&mutex, NULL);
     pthread_cond_init(&initial_condition, NULL);
     pthread_cond_init(&other_condition, NULL);
@@ -137,12 +137,12 @@ int main(int argc, char *argv[])
         pthread_create(&threads[i], NULL, fun_ptr, NULL);
     }
 
-    // Aguarda a finalizacao das threads
+    // Aguarda a finalização das threads
     for (int i = 0; i < nthreads; i++){
         pthread_join(threads[i], NULL);
     }
 
-    // Liberacao do mutex e variaveis condicionais
+    // Liberação do mutex e das variaveis condicionais
     pthread_mutex_destroy(&mutex);
     pthread_cond_destroy(&initial_condition);
     pthread_cond_destroy(&other_condition);
