@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
         pthread_join(threads[i], NULL);
     }
 
-    // Liberação do mutex e das variaveis condicionais
+    // Liberação do mutex e das variáveis condicionais
     pthread_mutex_destroy(&mutex);
     pthread_cond_destroy(&initial_condition);
     pthread_cond_destroy(&other_condition);
