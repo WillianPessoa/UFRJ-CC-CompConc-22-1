@@ -3,29 +3,106 @@
 
 ***
 
-## Laboratório 5
+## Laboratório 6
 
-**Objetivo:** Entender e aplicar os conceitos de variáveis de condições da biblioteca Pthread.
+**Objetivo:** Alterar código de "Leitores e Escritores" de forma que os escritores tenham prioridade na escrita (leitores devem esperar qualquer escritor que estiver esperando para escrever passarem na frente)
 
 
-### **Atividade 1**:
+### **Alterações realizadas**:
 
-A aplicação entra em deadlock e, consequentemente, nunca termina quando o número de threads A é alterado para 1.
+Inseri um contador de quantas threads querem escrever (chegaram no ponto de escrita e estão aguardando por algum motivo).
+
+Uma leitura só pode ser iniciada se:
+
+(1) Não há threads escrevendo;
+(2) Não há threads escritoras aguardando liberação.
+
+
+Trecho do código:
+```
+void InicLeit(int id) {
+  [...]
+  // Não realiza leitura enquanto houverem:
+  // (1) Threads escrevendo
+  // (2) Threads aguardando para escrever
+  while (escr > 0 || quer_escrever > 0) { 
+  [...]
+```
+
+
+### **5 Escritoras e 1 Leitora**:
+
+Situação de propridade ocorrendo:
+
+```
+Escritora 4 esta escrevendo
+E[2] quer escrever
+E[2] bloqueou
+L[1] quer ler
+L[1] bloqueou, pois tem gente escrevendo
+E[4] terminou de escrever
+L[1] desbloqueou
+L[1] bloqueou, pois tem 3 querendo escrever
+E[5] desbloqueou
+Escritora 5 esta escrevendo
+E[5] terminou de escrever
+L[1] desbloqueou
+L[1] bloqueou, pois tem 2 querendo escrever
+E[3] desbloqueou
+Escritora 3 esta escrevendo
+E[3] terminou de escrever
+L[1] desbloqueou
+L[1] bloqueou, pois tem 1 querendo escrever
+E[2] desbloqueou
+Escritora 2 esta escrevendo
+E[2] terminou de escrever
+L[1] desbloqueou
+Leitora 1 esta lendo
+L[1] terminou de ler
+```
 
 ***
+### **10 Escritoras e 1 Leitora**:
 
-### **Atividade 2**:
+Situação de propridade ocorrendo:
 
-Sim! Como o `pthread_cond_broadcast` libera todas as threads que estão aguardando/bloqueadas, a condição lógica vai sempre ser atendida.
-
-### **Atividade 3**:
-
-O logo de execução foi sempre correto.
-
-Como x pode ser incrementado entre essas duas linhas, não podemos realizar essa subtituição. Pois tal incremento faria x não ser um múltilo de 10.
-
-Ocorreram erros no log ao inverter as linhas 50 e 51: valores não múltiplos de 10 foram impressos.
-
-### **Atividade 4**:
-
-Necessário verificar o código em `main.c`. Mas foi obtido a ordem correta das mensagens em todos os testes realizados.
+```
+L[1] quer ler
+L[1] bloqueou, pois tem gente escrevendo
+E[9] quer escrever
+E[9] bloqueou
+E[6] terminou de escrever
+L[1] desbloqueou
+L[1] bloqueou, pois tem 6 querendo escrever
+E[3] desbloqueou
+Escritora 3 esta escrevendo
+E[3] terminou de escrever
+L[1] desbloqueou
+L[1] bloqueou, pois tem 5 querendo escrever
+E[4] desbloqueou
+Escritora 4 esta escrevendo
+E[4] terminou de escrever
+L[1] desbloqueou
+L[1] bloqueou, pois tem 4 querendo escrever
+E[7] desbloqueou
+Escritora 7 esta escrevendo
+E[7] terminou de escrever
+L[1] desbloqueou
+L[1] bloqueou, pois tem 3 querendo escrever
+E[10] desbloqueou
+Escritora 10 esta escrevendo
+E[10] terminou de escrever
+E[8] desbloqueou
+Escritora 8 esta escrevendo
+L[1] desbloqueou
+L[1] bloqueou, pois tem gente escrevendo
+E[8] terminou de escrever
+E[9] desbloqueou
+Escritora 9 esta escrevendo
+L[1] desbloqueou
+L[1] bloqueou, pois tem gente escrevendo
+E[9] terminou de escrever
+L[1] desbloqueou
+Leitora 1 esta lendo
+L[1] terminou de ler
+```
